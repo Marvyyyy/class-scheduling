@@ -1,0 +1,50 @@
+SELECT tbl_users.id,tbl_users.username,tbl_faculty.fname,tbl_faculty.mname,tbl_faculty.lname,tbl_faculty.suffix,tbl_specialization.specialization_title,role.role_name 
+FROM tbl_users INNER JOIN tbl_faculty ON tbl_users.profile_id=tbl_faculty.id 
+LEFT JOIN tbl_specialization ON tbl_faculty.spec_code = tbl_specialization.specialization_id 
+INNER JOIN role ON tbl_users.role=role.id 
+WHERE ((tbl_users.role=3) OR (tbl_users.role=4)) AND (tbl_users.is_deleted=0);
+
+SELECT tbl_users.id,tbl_users.username,tbl_faculty.fname,tbl_faculty.mname,tbl_faculty.lname,tbl_faculty.suffix,role.role_name,tbl_users.is_deleted 
+FROM tbl_users INNER JOIN tbl_faculty ON tbl_users.profile_id=tbl_faculty.id 
+JOIN role ON tbl_users.role=role.id 
+WHERE ((tbl_users.role=3) OR (tbl_users.role=4)) AND (tbl_users.is_deleted=0)
+UNION SELECT tbl_faculty.spec_code,tbl_faculty.id,tbl_specialization.specialization_id,tbl_specialization.specialization_title
+FROM tbl_faculty
+INNER JOIN tbl_faculty_spec ON tbl_faculty.id=tbl_faculty_spec.faculty_id
+INNER JOIN tbl_specialization ON tbl_faculty_spec.spec_code=tbl_specialization.specialization_id
+
+FINAL
+SELECT tbl_users.id,tbl_users.username,tbl_faculty.fname,tbl_faculty.mname,tbl_faculty.lname,tbl_faculty.suffix,role.role_name,tbl_users.is_deleted,tbl_specialization.specialization_title 
+FROM tbl_users INNER JOIN tbl_faculty ON tbl_users.profile_id=tbl_faculty.id 
+JOIN role ON tbl_users.role=role.id 
+LEFT JOIN tbl_faculty_spec ON tbl_faculty.id=tbl_faculty_spec.faculty_id
+LEFT JOIN tbl_specialization ON tbl_faculty_spec.spec_code=tbl_specialization.specialization_id
+WHERE ((tbl_users.role=3) OR (tbl_users.role=4)) AND (tbl_users.is_deleted=0)
+=============================================
+SELECT tbl_users.id,tbl_users.username,tbl_faculty.fname,tbl_faculty.mname,tbl_faculty.lname,tbl_faculty.suffix,role.role_name,tbl_users.is_deleted
+FROM tbl_users INNER JOIN tbl_faculty ON tbl_users.profile_id=tbl_faculty.id 
+JOIN role ON tbl_users.role=role.id
+WHERE ((tbl_users.role=3) OR (tbl_users.role=4)) AND (tbl_users.is_deleted=0)
+
+
+
+SELECT tbl_faculty.id, GROUP_CONCAT(tbl_subject.subj_id) FROM tbl_subject
+RIGHT JOIN tbl_specialization ON tbl_specialization.subj_code = tbl_subject.subj_id
+right JOIN tbl_faculty ON tbl_specialization.faculty_id = tbl_faculty.id
+GROUP BY tbl_faculty.id
+
+
+SELECT tbl_users.id,tbl_users.username,tbl_faculty.fname,tbl_faculty.mname,tbl_faculty.lname,tbl_faculty.suffix,role.role_name,tbl_users.is_deleted,tbl_specialization.subj_code, GROUP_CONCAT(tbl_specialization.subj_code)
+FROM tbl_users INNER JOIN tbl_faculty ON tbl_users.profile_id=tbl_faculty.id 
+JOIN role ON tbl_users.role=role.id
+left JOIN tbl_specialization ON tbl_faculty.id=tbl_specialization.faculty_id
+WHERE ((tbl_users.role=3) OR (tbl_users.role=4)) AND (tbl_users.is_deleted=0)
+GROUP BY tbl_faculty.id
+
+SELECT tbl_users.id,tbl_users.username,tbl_faculty.fname,tbl_faculty.mname,tbl_faculty.lname,tbl_faculty.suffix,role.role_name,tbl_users.is_deleted,GROUP_CONCAT(tbl_subject.subj_code)
+FROM tbl_users INNER JOIN tbl_faculty ON tbl_users.profile_id=tbl_faculty.id 
+JOIN role ON tbl_users.role=role.id
+left JOIN tbl_specialization ON tbl_faculty.id=tbl_specialization.faculty_id
+LEFT JOIN tbl_subject on tbl_specialization.subj_code=tbl_subject.subj_id
+WHERE ((tbl_users.role=3) OR (tbl_users.role=4)) AND (tbl_users.is_deleted=0)
+GROUP BY tbl_faculty.id
